@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}About Project{% endblock %}
+
+{% block content %}
+<div class="about-page-container">
+
+    <!-- Top Banner -->
+    <div class="about-hero-card">
+        <div class="hero-badge">AI/ML Educational Portfolio Project</div>
+        <h2 class="hero-title">Student Marks Prediction System</h2>
+        <p class="hero-lead">
+            An end-to-end, reproducible Machine Learning web application engineered with Python, Scikit-Learn, and Flask to predict student exam performance from study habits.
+        </p>
+    </div>
+
+    <!-- Technology Stack Cards -->
+    <div class="section-block">
+        <h3 class="section-subheading">Technology Stack & Architectural Components</h3>
+        
+        <div class="tech-stack-grid">
+            <!-- Python -->
+            <div class="tech-card">
+                <div class="tech-icon-circle python-color">🐍</div>
+                <h4 class="tech-title">Python</h4>
+                <p class="tech-desc">Core programming language providing robust data structures, numerical libraries, and web integration.</p>
+            </div>
+
+            <!-- Pandas -->
+            <div class="tech-card">
+                <div class="tech-icon-circle pandas-color">🐼</div>
+                <h4 class="tech-title">Pandas</h4>
+                <p class="tech-desc">Dataset ingestion, null handling, type casting, schema validation, and descriptive statistical aggregation.</p>
+            </div>
+
+            <!-- NumPy -->
+            <div class="tech-card">
+                <div class="tech-icon-circle numpy-color">🔢</div>
+                <h4 class="tech-title">NumPy</h4>
+                <p class="tech-desc">Vectorized array computing, range calculations, root-mean-squared calculations, and linear transformations.</p>
+            </div>
+
+            <!-- Matplotlib -->
+            <div class="tech-card">
+                <div class="tech-icon-circle matplotlib-color">📊</div>
+                <h4 class="tech-title">Matplotlib</h4>
+                <p class="tech-desc">Production-grade plot generation, scatter diagrams, regression trend lines, and residual diagnostic charts.</p>
+            </div>
+
+            <!-- Scikit-learn -->
+            <div class="tech-card">
+                <div class="tech-icon-circle scikit-color">⚙️</div>
+                <h4 class="tech-title">Scikit-learn</h4>
+                <p class="tech-desc">Ordinary Least Squares Linear Regression, <code>train_test_split</code>, and evaluation metrics (MAE, MSE, R²).</p>
+            </div>
+
+            <!-- Flask -->
+            <div class="tech-card">
+                <div class="tech-icon-circle flask-color">🌶️</div>
+                <h4 class="tech-title">Flask</h4>
+                <p class="tech-desc">WSGI web microframework routing HTTP requests, serving Jinja2 templates, and exposing RESTful JSON prediction APIs.</p>
+            </div>
+
+            <!-- Joblib -->
+            <div class="tech-card">
+                <div class="tech-icon-circle joblib-color">💾</div>
+                <h4 class="tech-title">Joblib</h4>
+                <p class="tech-desc">Model persistence and serialization, enabling instant inference loading without retraining on every query.</p>
+            </div>
+
+            <!-- Chart.js -->
+            <div class="tech-card">
+                <div class="tech-icon-circle chartjs-color">📈</div>
+                <h4 class="tech-title">Chart.js</h4>
+                <p class="tech-desc">Client-side interactive HTML5 canvas charts with dynamic tooltips, responsive resizing, and smooth animations.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mathematical Foundation Card -->
+    <div class="content-card mb-4">
+        <h3 class="card-title mb-2">Mathematical Formulation of Linear Regression</h3>
+        <p class="card-subtitle mb-4">How Ordinary Least Squares (OLS) models the relationship between study hours and exam scores</p>
+
+        <div class="math-explanation-box">
+            <div class="formula-block">
+                <span class="formula-main">Marks (y) = m &times; Study_Hours (X) + c</span>
+            </div>
+            
+            <div class="formula-details-grid">
+                <div class="formula-item">
+                    <h5>Slope (m): {{ metrics.get('slope', 7.75) }}</h5>
+                    <p>The marginal increase in marks expected for each additional hour of daily study. Here, every extra hour of revision yields approximately ~7.75 marks.</p>
+                </div>
+
+                <div class="formula-item">
+                    <h5>Intercept (c): {{ metrics.get('intercept', 16.19) }}</h5>
+                    <p>The expected baseline exam score for zero reported daily study hours, representing foundational prior knowledge or guessing baseline.</p>
+                </div>
+
+                <div class="formula-item">
+                    <h5>Loss Function: MSE</h5>
+                    <p>Ordinary Least Squares minimizes the sum of squared differences between actual student marks and the model's line of best fit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Limitations & Educational Ethics -->
+    <div class="content-card limitations-card">
+        <h3 class="card-title text-navy mb-2">Dataset Assumptions & Model Limitations</h3>
+        <p class="card-subtitle mb-3">Honest reflection on real-world factors beyond simple linear models</p>
+
+        <ul class="limitations-list">
+            <li>
+                <strong>Single-Feature Simplicity:</strong> The current model relies solely on daily study hours. In real academic environments, student scores are influenced by syllabus difficulty, sleep hygiene, quality of instruction, exam anxiety, and health.
+            </li>
+            <li>
+                <strong>Diminishing Marginal Returns:</strong> Real learning often exhibits a plateau effect where studying beyond 10-12 hours in a single day leads to cognitive exhaustion, whereas pure linear models continue to predict higher marks linearly.
+            </li>
+            <li>
+                <strong>Boundary Clamping:</strong> The system implements sensible boundary constraints ($0 \le \text{Marks} \le 100$) so inputs cannot predict negative scores or impossible marks over 100.
+            </li>
+            <li>
+                <strong>Educational Guidance Only:</strong> Predictions are indicative statistical estimates designed for portfolio demonstration, motivation, and planning.
+            </li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

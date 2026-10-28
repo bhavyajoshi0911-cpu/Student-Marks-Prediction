@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Data Overview{% endblock %}
+
+{% block content %}
+<div class="data-overview-container">
+
+    <!-- Top Action & Overview Header -->
+    <div class="page-top-bar">
+        <div>
+            <h2 class="page-main-title">Dataset Overview & Summary Statistics</h2>
+            <p class="page-main-subtitle">
+                Explore the complete verified collection of {{ total_records }} student performance records.
+            </p>
+        </div>
+        <div class="top-bar-actions">
+            <a href="{{ url_for('download_dataset') }}" class="btn btn-outline-primary" download>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download CSV Dataset</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Statistics Table Card -->
+    <div class="content-card mb-4">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Descriptive Statistical Summary</h3>
+                <p class="card-subtitle">Calculated using Pandas <code>describe()</code> method across both variables</p>
+            </div>
+            <span class="badge badge-primary">N = {{ total_records }} Samples</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table summary-stats-table">
+                <thead>
+                    <tr>
+                        <th>Statistical Metric</th>
+                        <th>Study Hours (X)</th>
+                        <th>Exam Marks (y)</th>
+                        <th>Interpretation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in summary_stats %}
+                    <tr>
+                        <td><strong>{{ stat.metric }}</strong></td>
+                        <td class="text-navy font-semibold">{{ stat.hours }} hrs</td>
+                        <td class="text-blue font-semibold">{{ stat.marks }} pts</td>
+                        <td class="text-muted">
+                            {% if "Mean" in stat.metric %}
+                                Central tendency of student study time and scores.
+                            {% elif "Standard Deviation" in stat.metric %}
+                                Measure of dispersion/spread around the mean.
+                            {% elif "Minimum" in stat.metric %}
+                                Lowest observed student record.
+                            {% elif "Maximum" in stat.metric %}
+                                Highest recorded study time and marks.
+                            {% elif "Median" in stat.metric %}
+                                50th percentile dividing top and bottom halves.
+                            {% elif "25th" in stat.metric %}
+                                Lower quartile boundary.
+                            {% elif "75th" in stat.metric %}
+                                Upper quartile boundary.
+                            {% else %}
+                                Total verified dataset entries.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Full Dataset Table Card with Instant Filter -->
+    <div class="content-card">
+        <div class="card-header flex-wrap-mobile">
+            <div>
+                <h3 class="card-title">Full Dataset Records ({{ total_records }} Total)</h3>
+                <p class="card-subtitle">Cleaned, validated numerical observations ready for ML consumption</p>
+            </div>
+            <!-- Search / Filter input -->
+            <div class="table-search-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="datasetSearchInput" class="form-control-search" placeholder="Filter by ID or Hours...">
+            </div>
+        </div>
+
+        <div class="table-responsive max-height-table">
+            <table class="data-table full-table" id="fullDatasetTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Study Hours (hrs/day)</th>
+                        <th>Exam Marks (/100)</th>
+                        <th>Performance Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in records %}
+                    <tr>
+                        <td><span class="id-badge">#{{ row.ID }}</span></td>
+                        <td><strong class="text-navy">{{ row.Study_Hours }}</strong> hrs</td>
+                        <td><strong class="text-blue">{{ row.Marks }}</strong></td>
+                        <td>
+                            {% if row.Marks >= 80 %}
+                                <span class="badge badge-success">Excellent (&ge; 80)</span>
+                            {% elif row.Marks >= 60 %}
+                                <span class="badge badge-primary">Good (60 - 79)</span>
+                            {% elif row.Marks >= 40 %}
+                                <span class="badge badge-warning">Pass (40 - 59)</span>
+                            {% else %}
+                                <span class="badge badge-danger">Fail (&lt; 40)</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer-info">
+            <span id="filteredRowCount">Showing all {{ total_records }} records</span>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

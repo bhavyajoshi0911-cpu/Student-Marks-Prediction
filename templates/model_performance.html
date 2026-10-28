@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Model Performance{% endblock %}
+
+{% block content %}
+<div class="model-performance-container">
+
+    <!-- Page Title Bar -->
+    <div class="page-top-bar">
+        <div>
+            <h2 class="page-main-title">Model Evaluation & Diagnostic Metrics</h2>
+            <p class="page-main-subtitle">
+                Rigorous testing metrics measured on the independent 20% test partition (20 unseen student samples).
+            </p>
+        </div>
+        <div class="top-bar-actions">
+            <span class="badge badge-equation">{{ equation }}</span>
+        </div>
+    </div>
+
+    <!-- 4 Evaluation Stat Cards -->
+    <div class="stats-grid mb-4">
+        <!-- MAE -->
+        <div class="stat-card stat-purple">
+            <div class="stat-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Mean Absolute Error (MAE)</span>
+                <h3 class="stat-value">{{ metrics.mae }}</h3>
+                <span class="stat-hint">Average margin of deviation</span>
+            </div>
+        </div>
+
+        <!-- R2 Score -->
+        <div class="stat-card stat-green">
+            <div class="stat-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">R² Score (Determination)</span>
+                <h3 class="stat-value">{{ metrics.r2_score }}</h3>
+                <span class="stat-hint">{{ (metrics.r2_score * 100) | round(1) }}% variance captured</span>
+            </div>
+        </div>
+
+        <!-- RMSE -->
+        <div class="stat-card stat-pink">
+            <div class="stat-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Root Mean Squared Error</span>
+                <h3 class="stat-value">{{ metrics.rmse }}</h3>
+                <span class="stat-hint">Penalizes larger outliers</span>
+            </div>
+        </div>
+
+        <!-- Sample Split Ratio -->
+        <div class="stat-card stat-blue">
+            <div class="stat-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Train / Test Split</span>
+                <h3 class="stat-value">{{ metrics.train_samples }} / {{ metrics.test_samples }}</h3>
+                <span class="stat-hint">80% Train &bull; 20% Test Split</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explanatory Guide Box -->
+    <div class="content-card mb-4 guide-card">
+        <h3 class="card-title mb-3">Understanding the Mathematical Metrics</h3>
+        <div class="metrics-explanation-grid">
+            <div class="metric-desc-box">
+                <div class="metric-title-badge">MAE &bull; Mean Absolute Error</div>
+                <p>
+                    <strong>Definition:</strong> The average of the absolute differences between the predictions and actual values.
+                </p>
+                <p class="text-muted">
+                    <strong>Interpretation:</strong> MAE is measured in the same unit as the target variable (marks). Lower values generally indicate smaller prediction errors. An MAE of ~{{ metrics.mae }} means predictions typically diverge by about {{ metrics.mae }} marks from true scores.
+                </p>
+            </div>
+            <div class="metric-desc-box">
+                <div class="metric-title-badge">R² &bull; Coefficient of Determination</div>
+                <p>
+                    <strong>Definition:</strong> Represents the proportion of variance for a dependent variable that's explained by an independent variable.
+                </p>
+                <p class="text-muted">
+                    <strong>Interpretation:</strong> Indicates how well the model explains variation in the target data. An R² of 1.0 represents a perfect fit, while 0.0 indicates the model predicts no better than the sample mean. Here, R² = {{ metrics.r2_score }}, indicating strong predictive capability for study time.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generated Python Matplotlib Plots Card -->
+    <div class="content-card mb-4">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Matplotlib Visualizations</h3>
+                <p class="card-subtitle">Generated directly by Python's <code>matplotlib</code> & <code>seaborn</code> backend during model training</p>
+            </div>
+            <span class="badge badge-primary">Backend Generated</span>
+        </div>
+
+        <div class="charts-comparison-grid">
+            <div class="plot-box">
+                <h4 class="plot-title">Regression Line Plot</h4>
+                <div class="plot-image-wrapper">
+                    <img src="{{ url_for('static', filename='images/study_hours_vs_marks.png') }}" alt="Study Hours vs Marks Matplotlib Plot" class="responsive-plot-img">
+                </div>
+                <p class="plot-caption">Figure 1: Full dataset scatter plot overlaying the fitted Ordinary Least Squares line.</p>
+            </div>
+
+            <div class="plot-box">
+                <h4 class="plot-title">Residuals Error Analysis</h4>
+                <div class="plot-image-wrapper">
+                    <img src="{{ url_for('static', filename='images/residuals_plot.png') }}" alt="Residuals Plot" class="responsive-plot-img">
+                </div>
+                <p class="plot-caption">Figure 2: Residual distribution (Actual - Predicted) centered symmetrically around 0.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Set Comparison Table: Actual vs Predicted -->
+    <div class="content-card">
+        <div class="card-header">
+            <div>
+                <h3 class="card-title">Unseen Test Set Predictions (Actual vs. Predicted)</h3>
+                <p class="card-subtitle">Detailed row-by-row breakdown of the 20 test samples held out during model training</p>
+            </div>
+            <span class="badge badge-success">20 Test Samples</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table test-comparison-table">
+                <thead>
+                    <tr>
+                        <th>Study Hours</th>
+                        <th>Actual Marks</th>
+                        <th>Predicted Marks</th>
+                        <th>Error (Pred - Actual)</th>
+                        <th>Accuracy Assessment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in test_comparison %}
+                    <tr>
+                        <td><strong>{{ item.hours }}</strong> hrs</td>
+                        <td><span class="badge-actual">{{ item.actual }}</span></td>
+                        <td><span class="badge-predicted">{{ item.predicted }}</span></td>
+                        <td>
+                            {% if item.error > 0 %}
+                                <span class="error-positive">+{{ item.error }}</span>
+                            {% elif item.error < 0 %}
+                                <span class="error-negative">{{ item.error }}</span>
+                            {% else %}
+                                <span class="text-muted">0.0</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% set abs_err = (item.error | abs) %}
+                            {% if abs_err <= 3.0 %}
+                                <span class="badge badge-success">Very Accurate (&le; 3 pts)</span>
+                            {% elif abs_err <= 6.0 %}
+                                <span class="badge badge-primary">Good (&le; 6 pts)</span>
+                            {% else %}
+                                <span class="badge badge-warning">Moderate Deviation</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
